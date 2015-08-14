@@ -15,6 +15,7 @@ namespace Arcadia.Emulator
         public string RomLocation;
         public string SearchPattern;
         public string IdentifierClass;
+        public int SelectedGame;
         public List<Game> Games;
 
         /// <summary>

@@ -66,6 +66,8 @@ namespace Arcadia.Emulator.Identifier
                     //Get the name of the rom through Nintendo Age
                     romGame.Name = NintendoAgeScraper.IdentifyGameByGameCode(NintendoAgeConsole.GameboyAdvance, gameCode);
 
+                    Log.Write("Adding information for game \"" + romGame.Name + "\"");
+
                     //Get the game data from GameDB
                     romGame = GameDBScraper.UpdateGameData(romGame);
                     

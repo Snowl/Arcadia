@@ -1,4 +1,6 @@
 ﻿using Arcadia.Emulator;
+using System;
+using System.Drawing;
 using System.IO;
 using System.Net;
 using System.Xml;
@@ -51,7 +53,6 @@ namespace Arcadia.Scraper
                 //Get the data from the XML document
                 var gameData = xmlDoc.SelectNodes("Data/Game")[0];
                 game.Name = gameData["GameTitle"].InnerText;
-                game.Overview = gameData["Overview"]?.InnerText;
                 game.ReleaseDate = gameData["ReleaseDate"]?.InnerText;
                 game.Players = gameData["Players"]?.InnerText;
 
@@ -64,10 +65,35 @@ namespace Arcadia.Scraper
 
                 //If we found the clearlogo, download it and save it into the game's data directory.
                 client.DownloadFile(BaseImgUrl + ClearLogo, Path.Combine(game.DataDirectory, "logo.png"));
+
+                var clearLogoImage = Bitmap.FromFile(Path.Combine(game.DataDirectory, "logo.png"));
+
+                if (clearLogoImage.Height > Globals.LogoMaxSize)
+                {
+                    var scaledImage = ScaleImage(clearLogoImage, Int32.MaxValue, Globals.LogoMaxSize);
+                    clearLogoImage.Dispose();
+                    scaledImage.Save(Path.Combine(game.DataDirectory, "logo.png"));
+                }
             }
 
             //Return the game with updated information
             return game;
+        }
+
+        static public Bitmap ScaleImage(Image image, int maxWidth, int maxHeight)
+        {
+            var ratioX = (double)maxWidth / image.Width;
+            var ratioY = (double)maxHeight / image.Height;
+            var ratio = Math.Min(ratioX, ratioY);
+
+            var newWidth = (int)(image.Width * ratio);
+            var newHeight = (int)(image.Height * ratio);
+
+            var newImage = new Bitmap(newWidth, newHeight);
+            Graphics.FromImage(newImage).DrawImage(image, 0, 0, newWidth, newHeight);
+            Bitmap bmp = new Bitmap(newImage);
+
+            return bmp;
         }
     }
 }

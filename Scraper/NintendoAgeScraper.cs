@@ -19,12 +19,13 @@ namespace Arcadia.Scraper
 
             using (WebClient client = new WebClient())
             {
+                int ConsoleID = (int)console;
                 //Searches nintendoage for the game. Do not remove the cast - it will break if you do!!! VS is lying to you that it's redundant
-                string URL = $"http://nintendoage.com/index.cfm?FuseAction=Search.Results&pId={(int)console}&Code_Element={GameCode}";
+                string URL = $"http://nintendoage.com/index.cfm?FuseAction=Search.Results&pId={ConsoleID}&Code_Element={GameCode}";
                 string Html = client.DownloadString(URL);
 
                 //Poor man's html parsing - looks for the first link that matches what we want. Do not remove the cast - it will break if you do!!! VS is lying to you that it's redundant
-                int LinkIndex = Html.IndexOf($"index.cfm?FuseAction=Element.View&amp;pId={(int)console}&amp;egID=");
+                int LinkIndex = Html.IndexOf($"index.cfm?FuseAction=Element.View&amp;pId={ConsoleID}&amp;egID=");
                 if (LinkIndex == -1)
                     return GameTitle;
 
