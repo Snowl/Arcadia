@@ -31,7 +31,7 @@ namespace Arcadia
         /// <param name="Information">The information to append to the log</param>
         public static void Write(string Information)
         {
-            File.AppendAllText(LogName, $"[LOG] {DateTime.Now.ToUniversalTime()}: {Information}{Environment.NewLine}");
+            File.AppendAllText(LogName, $"[LOG] {DateTime.Now.ToUniversalTime()}: {Information + Environment.NewLine}");
         }
     }
 }

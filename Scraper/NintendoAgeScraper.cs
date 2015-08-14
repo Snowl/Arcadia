@@ -19,6 +19,8 @@ namespace Arcadia.Scraper
 
             using (WebClient client = new WebClient())
             {
+                client.Encoding = System.Text.Encoding.UTF8;
+                client.Headers.Add(HttpRequestHeader.AcceptCharset, "UTF-8");
                 int ConsoleID = (int)console;
                 //Searches nintendoage for the game. Do not remove the cast - it will break if you do!!! VS is lying to you that it's redundant
                 string URL = $"http://nintendoage.com/index.cfm?FuseAction=Search.Results&pId={ConsoleID}&Code_Element={GameCode}";

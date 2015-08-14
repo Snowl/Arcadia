@@ -63,6 +63,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
@@ -72,6 +73,7 @@
     <Compile Include="Emulator\Identifier\IIdentifier.cs" />
     <Compile Include="Emulator\Identifier\Mame.cs" />
     <Compile Include="Emulator\Identifier\VBA.cs" />
+    <Compile Include="Evil\Prompt.cs" />
     <Compile Include="FontManager.cs" />
     <Compile Include="GameMain.cs" />
     <Compile Include="Globals.cs" />

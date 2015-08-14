@@ -1,5 +1,6 @@
 ﻿using Arcadia.Emulator.Identifier;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.IO;
 using System.Web.Script.Serialization;
@@ -59,7 +60,7 @@ namespace Arcadia.Emulator
                 //Create the class specified within the emu.json to parse games for the emulator
                 IIdentifier romIdentifier = (IIdentifier)System.Reflection.Assembly.GetExecutingAssembly().CreateInstance(emu?.IdentifierClass);
                 //Identify the roms based off the class requested and assign them to the emulator
-                emu.Games = romIdentifier.GetGames(emu);
+                emu.Games = romIdentifier.GetGames(emu).OrderBy(x => x.Name).ToList();
 
                 //Add the emulator to the list
                 emulatorList.Add(emu);

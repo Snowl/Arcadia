@@ -1,4 +1,5 @@
 ﻿using Arcadia.Emulator;
+using Arcadia.Evil;
 using System;
 using System.Drawing;
 using System.IO;
@@ -25,6 +26,8 @@ namespace Arcadia.Scraper
 
             using (WebClient client = new WebClient())
             {
+                client.Encoding = System.Text.Encoding.UTF8;
+                client.Headers.Add(HttpRequestHeader.AcceptCharset, "UTF-8");
                 //Request the game from the website. This is a loose search so it might not return the game requested, but a game related to it
                 string dbXML = client.DownloadString($"http://thegamesdb.net/api/GetGamesList.php?name={game.Name}");
 
@@ -59,12 +62,20 @@ namespace Arcadia.Scraper
                 string BaseImgUrl = xmlDoc.SelectNodes("Data")[0]["baseImgUrl"]?.InnerText;
                 string ClearLogo = gameData["Images"]?["clearlogo"]?.InnerText;
 
+                string ClearLogoURL = BaseImgUrl + ClearLogo;
+
                 //If the "ClearLogo" isn't specified, we can't download it, so just return the updated game
                 if (string.IsNullOrEmpty(ClearLogo))
-                    return game;
+                {
+                    ClearLogoURL = Prompt.ShowDialog($"Paste in URL for logo game {game.Name}", "Missing URL for Logo");
+                    if (string.IsNullOrEmpty(ClearLogoURL))
+                    {
+                        return game;
+                    }
+                }
 
                 //If we found the clearlogo, download it and save it into the game's data directory.
-                client.DownloadFile(BaseImgUrl + ClearLogo, Path.Combine(game.DataDirectory, "logo.png"));
+                client.DownloadFile(ClearLogoURL, Path.Combine(game.DataDirectory, "logo.png"));
 
                 var clearLogoImage = Bitmap.FromFile(Path.Combine(game.DataDirectory, "logo.png"));
 

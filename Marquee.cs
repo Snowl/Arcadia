@@ -56,7 +56,7 @@ namespace Arcadia
         {
             //If the text is starting to go off the screen, start rendering the sideX. Increment the sideX variable each time it is rendered
             if (_mainX + _width >= SwinGame.ScreenWidth())
-                SwinGame.DrawText(_text, Color.White, _font, new Point2D() { X = _sideX++, Y = _y });
+                SwinGame.DrawText(_text, Globals.TextColor, _font, new Point2D() { X = _sideX++, Y = _y });
             else
                 _sideX = -_width; //Reset the sideX to be off the screen once the main text is fully on screen
 
@@ -65,7 +65,7 @@ namespace Arcadia
                 _mainX = 0;
 
             //Render the text and scroll it each time the marquee is rendered
-            SwinGame.DrawText(_text, Color.White, _font, new Point2D() { X = _mainX++, Y = _y });
+            SwinGame.DrawText(_text, Globals.TextColor, _font, new Point2D() { X = _mainX++, Y = _y });
         }
     }
 }
