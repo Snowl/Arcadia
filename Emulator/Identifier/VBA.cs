@@ -34,13 +34,23 @@ namespace Arcadia.Emulator.Identifier
                 //Open up each ROM to be read
                 using (BinaryReader reader = new BinaryReader(File.Open(rom, FileMode.Open)))
                 {
-                    //Skip to position 0xA0
-                    reader.ReadBytes(0xA0);
+                    if (Path.GetExtension(rom) == ".gba")
+                    {
+                        //Skip to position 0xA0
+                        reader.ReadBytes(0xA0);
 
-                    //Read the Game Title (0xA0 - 0xAB)
-                    gameTitle = Encoding.ASCII.GetString(reader.ReadBytes(12)).Replace("\0", "").Replace(" ", "");
-                    //Read the Game Code (0xAC - 0xAF)
-                    gameCode = Encoding.ASCII.GetString(reader.ReadBytes(4));
+                        //Read the Game Title (0xA0 - 0xAB)
+                        gameTitle = Encoding.ASCII.GetString(reader.ReadBytes(12)).Replace("\0", "").Replace(" ", "");
+                        //Read the Game Code (0xAC - 0xAF)
+                        gameCode = Encoding.ASCII.GetString(reader.ReadBytes(4));
+                    }
+                    else if (Path.GetExtension(rom) == ".gbc")
+                    {
+                        reader.ReadBytes(0x134);
+                        
+                        gameTitle = Encoding.ASCII.GetString(reader.ReadBytes(11)).Replace("\0", "").Replace(" ", "");
+                        gameCode = Encoding.ASCII.GetString(reader.ReadBytes(4));
+                    }
                 }
 
                 //Create the gameName for the directory

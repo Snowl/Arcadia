@@ -101,7 +101,7 @@ namespace Arcadia
                 var gameBackLoc = new Point2D()
                 {
                     X = (SwinGame.ScreenWidth() / 2) - (_gameBack.Width / 2),
-                    Y = SwinGame.ScreenHeight() - _gameBack.Height - 30
+                    Y = SwinGame.ScreenHeight() - _gameBack.Height - 50
                 };
                 SwinGame.DrawBitmap(_gameBack, gameBackLoc);
 
@@ -210,7 +210,7 @@ namespace Arcadia
                     int ThumbHeight = ((_gameBack.Height - 28) * ratio) / 100;
 
                     //Get the interval height. The 26 was just random guessing
-                    int IntervalHeight = (_gameBack.Height - ThumbHeight - 26) / amtOfExtraGames;
+                    int IntervalHeight = (_gameBack.Height - ThumbHeight - 28) / amtOfExtraGames;
 
                     //Draw the thumb at the location the user is at
                     SwinGame.FillRectangle(Globals.ScrollBarThumb, _gameBack.Width + gameBackLoc.X - 30, gameBackLoc.Y + 7 + (_skip * IntervalHeight),
@@ -308,7 +308,7 @@ namespace Arcadia
                               new Point2D()
                               {
                                   X = EmulatorX,
-                                  Y = SwinGame.ScreenHeight() - 12 - EmulatorHeight - 6
+                                  Y = SwinGame.ScreenHeight() - 12 - EmulatorHeight - 8
                               });
 
             //The accumulatedWidth is the width of all the current items drawn
@@ -324,7 +324,7 @@ namespace Arcadia
                                   new Point2D()
                                   {
                                       X = AccumulatedWidth - SmallEmulatorWidth,
-                                      Y = SwinGame.ScreenHeight() - 12 - SmallEmulatorHeight - 6
+                                      Y = SwinGame.ScreenHeight() - 12 - SmallEmulatorHeight - 8
                                   });
                 AccumulatedWidth -= SmallEmulatorWidth;
             }
@@ -340,7 +340,7 @@ namespace Arcadia
                                   new Point2D()
                                   {
                                       X = AccumulatedWidth + 10,
-                                      Y = SwinGame.ScreenHeight() - 12 - SmallEmulatorHeight - 6
+                                      Y = SwinGame.ScreenHeight() - 12 - SmallEmulatorHeight - 8
                                   });
                 AccumulatedWidth += SmallEmulatorWidth;
             }
@@ -348,7 +348,7 @@ namespace Arcadia
 
         public void UpdateMarquee()
         {
-            _topMarquee.UpdateText($"Arcadia v{_version} [{_currentTime.ToUniversalTime()}]");
+            _topMarquee.UpdateText($"Arcadia v{_version} [{_currentTime.ToString()}]");
         }
     }
 }
