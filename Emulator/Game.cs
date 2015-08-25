@@ -7,5 +7,6 @@
         public string Location;
         public string ReleaseDate;
         public string Players;
+        public bool Skip = false;
     }
 }

@@ -22,7 +22,10 @@ namespace Arcadia.Scraper
         {
             //If the game's name is empty we can't get information about it... so just return the game.
             if (string.IsNullOrEmpty(game.Name))
+            {
+                game.Skip = true;
                 return game;
+            }
 
             using (WebClient client = new WebClient())
             {
@@ -68,6 +71,12 @@ namespace Arcadia.Scraper
                 if (string.IsNullOrEmpty(ClearLogo))
                 {
                     ClearLogoURL = Prompt.ShowDialog($"Paste in URL for logo game {game.Name}", "Missing URL for Logo");
+                    if (ClearLogoURL == "BIOS")
+                    {
+                        game.Skip = true;
+                        return game;
+                    }
+
                     if (string.IsNullOrEmpty(ClearLogoURL))
                     {
                         return game;

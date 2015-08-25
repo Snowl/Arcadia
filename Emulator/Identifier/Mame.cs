@@ -79,8 +79,11 @@ namespace Arcadia.Emulator.Identifier
                     File.WriteAllText(infoJsonPath, serializer.Serialize(romGame));
                 }
 
+                Game game = serializer.Deserialize<Game>(File.ReadAllText(infoJsonPath));
+
                 //Add the game to the game list
-                games.Add(serializer.Deserialize<Game>(File.ReadAllText(infoJsonPath)));
+                if (!game.Skip)
+                    games.Add(game);
             }
 
             return games;

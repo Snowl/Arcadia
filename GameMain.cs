@@ -22,14 +22,15 @@ namespace Arcadia
     {
         private string _version;
 
-        public FontManager _manager;
-        public Marquee _topMarquee;
-        public DateTime _currentTime;
-        public List<Emu> _emulators;
+        private FontManager _manager;
+        private Marquee _topMarquee;
+        private DateTime _currentTime;
+        private List<Emu> _emulators;
 
-        public Bitmap _gameLogoBitmap;
-        public int _selectedEmulator;
-        public bool shouldUpdateData = true;
+        private Bitmap _gameLogoBitmap;
+        private Bitmap _gameBack;
+        private int _selectedEmulator;
+        private bool _shouldUpdateData = true;
 
         //Amount of items to skip in the game listing
         private int _skip = 0;
@@ -66,7 +67,7 @@ namespace Arcadia
 
             //Get the square to display the games on
             var LogoPadding = 50;
-            var _gameBack = SwinGame.LoadBitmap("back.png");
+            _gameBack = SwinGame.LoadBitmap("back.png");
 
             //Add 40 to the max size just to ensure some empty space before the list
             Globals.LogoMaxSize = (SwinGame.ScreenHeight() - _gameBack.Height - 30) - LogoPadding - 40;
@@ -78,6 +79,11 @@ namespace Arcadia
             _topMarquee = new Marquee("", _manager.GetFont("PressStart2P", 8), SwinGame.ScreenHeight() - 10);
             UpdateMarquee();
 
+            RenderLoop(LogoPadding);
+        }
+
+        public void RenderLoop(int LogoPadding)
+        {
             //Render loop while the user hasn't clicked the X button
             while (!SwinGame.WindowCloseRequested())
             {
@@ -126,10 +132,10 @@ namespace Arcadia
                     if (i == (_emulators[_selectedEmulator].SelectedGame - _skip))
                     {
                         //Only load bitmap into memory if the game changes
-                        if (shouldUpdateData)
+                        if (_shouldUpdateData)
                         {
-                            shouldUpdateData = false;
-                            
+                            _shouldUpdateData = false;
+
                             //Load the logo to memory if it exists
                             if (File.Exists(Path.Combine(game.DataDirectory, "logo.png")))
                             {
@@ -155,15 +161,21 @@ namespace Arcadia
                             SwinGame.DrawText(TruncatedName,
                                               Globals.TextColor,
                                               _manager.GetFont("PressStart2P", 60),
-                                              new Point2D() { X = (SwinGame.ScreenWidth() / 2) - (LogoTextWidth / 2),
-                                                              Y = LogoPadding + (Globals.LogoMaxSize / 2) - (LogoTextHeight / 2) });
+                                              new Point2D()
+                                              {
+                                                  X = (SwinGame.ScreenWidth() / 2) - (LogoTextWidth / 2),
+                                                  Y = LogoPadding + (Globals.LogoMaxSize / 2) - (LogoTextHeight / 2)
+                                              });
                         }
                         else
                         {
                             //Draw the offical game logo to screen
-                            SwinGame.DrawBitmap(_gameLogoBitmap, 
-                                                new Point2D() { X = (SwinGame.ScreenWidth() / 2) - (_gameLogoBitmap.Width / 2),
-                                                                Y = LogoPadding + (Globals.LogoMaxSize / 2) - (_gameLogoBitmap.Height / 2) });
+                            SwinGame.DrawBitmap(_gameLogoBitmap,
+                                                new Point2D()
+                                                {
+                                                    X = (SwinGame.ScreenWidth() / 2) - (_gameLogoBitmap.Width / 2),
+                                                    Y = LogoPadding + (Globals.LogoMaxSize / 2) - (_gameLogoBitmap.Height / 2)
+                                                });
                         }
 
                         //Draw a rectangle around the selected item
@@ -176,19 +188,19 @@ namespace Arcadia
                             {
                                 StartInfo = new ProcessStartInfo
                                 {
-                                    FileName = Path.Combine(_emulators[_selectedEmulator].Location, _emulators[_selectedEmulator].LaunchExecutable),
-                                    Arguments = string.Format(_emulators[_selectedEmulator].LaunchArguments, _emulators[_selectedEmulator].Games[i + _skip].Location),
-                                    UseShellExecute = false,
-                                    RedirectStandardOutput = true,
-                                    CreateNoWindow = true
+                                    WorkingDirectory = _emulators[_selectedEmulator].Location,
+                                    FileName = _emulators[_selectedEmulator].LaunchExecutable
                                 }
                             };
+                            proc.StartInfo.Arguments = _emulators[_selectedEmulator].LaunchArguments;
+                            proc.StartInfo.Arguments = proc.StartInfo.Arguments.Replace("{Filename}", Path.GetFileName(_emulators[_selectedEmulator].Games[_emulators[_selectedEmulator].SelectedGame].Location)).Replace(
+                                                                                        "{Fullpath}", Path.GetFullPath(_emulators[_selectedEmulator].Games[_emulators[_selectedEmulator].SelectedGame].Location));
                             proc.Start();
                         }
                     }
 
                     //Draw the games into the list
-                    SwinGame.DrawText(game.Name, Globals.TextColor,  _manager.GetFont("Geometria", 24), RenderLocation);
+                    SwinGame.DrawText(game.Name, Globals.TextColor, _manager.GetFont("Geometria", 24), RenderLocation);
 
                     i += 1;
                 }
@@ -224,7 +236,7 @@ namespace Arcadia
                 if (SwinGame.KeyTyped(KeyCode.vk_UP))
                 {
                     //Ensure that the logo gets updated
-                    shouldUpdateData = true;
+                    _shouldUpdateData = true;
                     //Decrement the index (ensure it doesn't go below 0)
                     _emulators[_selectedEmulator].SelectedGame = Math.Max(0, _emulators[_selectedEmulator].SelectedGame - 1);
 
@@ -237,9 +249,9 @@ namespace Arcadia
                 else if (SwinGame.KeyTyped(KeyCode.vk_DOWN))
                 {
                     //Ensure that the logo gets updated
-                    shouldUpdateData = true;
+                    _shouldUpdateData = true;
                     //Decrement the index (ensure it doesn't go above the amount of games)
-                    _emulators[_selectedEmulator].SelectedGame = Math.Min(_emulators[_selectedEmulator].SelectedGame + 1, 
+                    _emulators[_selectedEmulator].SelectedGame = Math.Min(_emulators[_selectedEmulator].SelectedGame + 1,
                                                                           _emulators[_selectedEmulator].Games.Count - 1);
 
                     //If the user needs to scroll, decrease the skip amount by 1
@@ -253,14 +265,14 @@ namespace Arcadia
                 if (SwinGame.KeyTyped(KeyCode.vk_LEFT))
                 {
                     //Ensure that the logo gets updated
-                    shouldUpdateData = true;
+                    _shouldUpdateData = true;
                     _selectedEmulator = Math.Max(0, _selectedEmulator - 1);
 
                     FixSkip();
                 }
-                else if(SwinGame.KeyTyped(KeyCode.vk_RIGHT))
+                else if (SwinGame.KeyTyped(KeyCode.vk_RIGHT))
                 {
-                    shouldUpdateData = true;
+                    _shouldUpdateData = true;
                     _selectedEmulator = Math.Min(_selectedEmulator + 1, _emulators.Count - 1);
 
                     FixSkip();
